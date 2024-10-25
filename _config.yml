@@ -1,22 +1,20 @@
 # Configuration for CV
 person:
-  first_name: Vivek
-  last_name: Srikrishnan
+  first_name: Ben
+  last_name: Rachunok
   title: Assistant Professor
-  affiliation: Department of Biological & Environmental Engineering
-  affiliation_link: https://bee.cals.cornell.edu
-  email: viveks@cornell.edu
-  web: https://viveks.bee.cornell.edu
-  email: viveks@cornell.edu
-  web: https://viveks.bee.cornell.edu/
-  github: vsrikrish
-  googlescholar: CY_JxugAAAAJ
-  orcid: 0000-0003-0049-3805
+  affiliation: Edward P. Fitts Department of Industrial and Systems Engineering
+  affiliation_link: http://ise.ncsu.edu
+  email: barachun@ncsu.edu
+  web: http://resilience.wordpress.ncsu.edu
+  github: brachunok
+  googlescholar: Ct3IhL-MAAAAJ
+  orcid: 0000-0001-6405-978X
   subject: "climate, systems, engineering"
   address:
-    line1: 318 Riley-Robb Hall
-    line2: Cornell University
-    postcode: Ithaca, NY 14853
+    line1: 915 Partners Way, 4171
+    line2: North Carolina State University
+    postcode: Raleigh, NC 27606
     country: USA
 
 paths:

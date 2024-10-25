@@ -86,5 +86,6 @@ my_filters = [
     filters.sort_advisees
 ]
 cv = CV('_config.yml', filters=my_filters)
-with open('Srikrishnan-CV.tex', 'w') as f:
+with open('rachunok-CV.tex', 'w') as f:
     f.write(cv.render_tex('cv.tex'))
+

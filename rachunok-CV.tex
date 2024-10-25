@@ -1,0 +1,702 @@
+
+\documentclass[11pt,article,oneside]{memoir}
+\usepackage[english]{babel}
+\usepackage{titlesec}
+\usepackage{setspace}
+
+% margins
+\usepackage[left=1.5in, right=1.75in, top=1in, bottom=0.75in]{geometry}% adjust the page margins
+
+\RequirePackage{xcolor}
+\definecolor{CornellRed}{HTML}{b31b1b} % official Cornell red color -- use for text etc
+\definecolor{CornellGray}{HTML}{222222} % official Cornell gray -- use for Section
+\definecolor{LightGray}{HTML}{F7F7F7} % background color -- do not use for anything else
+\definecolor{BrickRed}{HTML}{C04829} % backup color
+\definecolor{GrassGreen}{HTML}{359245}
+\definecolor{WarmYellow}{HTML}{E9A139}
+
+%% Choose fonts for use with xelatex
+\usepackage{fontspec}
+\setmainfont[Path=fonts/,
+Mapping={tex-text},
+Numbers={OldStyle},
+Ligatures={Common},
+UprightFont=*-Regular,
+BoldFont=*-Bold,
+ItalicFont=*-Italic,
+BoldItalicFont=*-BoldItalic
+]{CrimsonText}
+\setsansfont[Path=fonts/,
+Mapping=tex-text,
+Colour=b31b1b,
+UprightFont=*-Regular,
+BoldFont=*-Bold,
+ItalicFont=*-Italic]{Lato}
+\setmonofont[Path=fonts/,
+Mapping=tex-text,
+Scale=0.9,
+UprightFont=*-Regular]{Inconsolata}
+
+%%------------------------------------------------------------------------
+%% Section styling
+%%------------------------------------------------------------------------
+
+%% This includes a fudge from the following link in order to get the
+%% subsection to align with a section
+%% http://tex.stackexchange.com/questions/19200/titlesec-remove-space-after-empty-margin-section
+
+\makeatletter
+\newif\ifaftersec\aftersecfalse
+
+\newcommand\setsubskip{%
+    \global\aftersectrue
+    \everypar{%
+        \global\aftersecfalse
+        \if@noskipsec
+            \global\@noskipsecfalse
+            \clubpenalty\@M
+            \hskip-\parindent
+            \begingroup
+                \@svsechd\unskip{\hspace{\@tempskipb}}%
+            \endgroup
+        \else
+            \clubpenalty\@clubpenalty\everypar{}%
+        \fi}}
+
+\newcommand\subskip{%
+  \ifaftersec
+     \removelastskip%
+     \vspace{-\baselineskip}
+  \fi
+  \global\aftersecfalse}
+
+% Section styling
+\titleformat{\section}[leftmargin]{\raggedleft\sffamily\bfseries\footnotesize}{}{0pt}{}[\setsubskip]
+\titlespacing*{\section}{2cm}{1ex}{0.25in}
+
+% Subsection styling
+\titleformat{\subsection}{\subskip\itshape}{}{0pt}{}[]
+\titlespacing*{\subsection}{0em}{2.5ex}{1ex}
+
+\raggedbottom
+\makeatother
+
+% useful macro
+\newcommand{\dotspace}{\quad}
+
+% better lists
+\usepackage{enumitem}
+\setlist[itemize, 1]{nosep, noitemsep, labelsep=-5pt, leftmargin=*, after=\vspace{\baselineskip}, itemindent=-15pt, labelindent=5pt}
+
+% Use BibLaTeX
+\usepackage[autostyle=true, autopunct=true, english=american]{csquotes}
+
+%% other stuff
+% icons for the contact info
+\usepackage{fontawesome5}
+\usepackage{academicons}
+
+% macros and environments
+\newcommand{\Header}[1]{\\\multicolumn{3}{L{7in}}{\color{BrickRed}\Large{\spacedlowsmallcaps{#1}}}\\}
+\newcommand{\Publication}[1]{\fullcite{#1} & \citeyear{#1}}
+\newcommand{\CVEntry}[3]{#1 & #2 & #3}
+\newenvironment{cv}
+{
+	\noindent\begin{longtable}{ >{\em}R{1in} L{5in} >{\em}R{0.875in} }
+}{
+    \end{longtable}
+}
+
+\usepackage{fancyhdr}
+\usepackage[yyyymmdd,hhmmss]{datetime}
+\pagestyle{fancy}
+\rfoot{Current as of \today}
+\cfoot{}
+\lfoot{Page \thepage}
+
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead{}
+
+% have to load this last
+\usepackage{hyperref} % Required for adding links	and customizing them
+\hypersetup{colorlinks, breaklinks, urlcolor=CornellRed, linkcolor=CornellRed, pdfnewwindow=true}
+
+%% ------------------------------------------------------------------------
+%%   Bibliography formatting
+%% ------------------------------------------------------------------------
+%% documentation:
+%% http://ctan.mirrorcatalogs.com/macros/latex/exptl/biblatex/doc/biblatex.pdf
+% Use BibLaTeX
+\usepackage[
+	backend=biber,
+	style=publist,
+	plauthorfirstinit=true,
+	plauthorhandling=highlight,
+	plnumbering=none,
+	labeldateparts=false,
+	linktitles={none, doi, url},
+	hlyear=true,
+	marginyear=false,
+	doi=true,
+	url=false,
+	isbn=false,
+	maxbibnames=99,
+	maxcitenames=99,
+  giveninits,
+	date=year
+]{biblatex}
+
+\AtEveryBibitem{%
+  \clearlist{language}%
+}
+
+% specify sorting rules
+\DeclareSortingTemplate{ndymdt}{
+  \sort{
+    \field{presort}
+  }
+  \sort[final]{
+    \field{sortkey}
+  }
+  \sort{
+    \field{sortname}
+    \field{author}
+    \field{editor}
+    \field{translator}
+    \field{sorttitle}
+    \field{title}
+  }
+  \sort[direction=descending]{
+    \field{sortyear}
+    \field{year}
+    \literal{9999}
+  }
+  \sort[direction=descending]{
+    \field[padside=left,padwidth=2,padchar=0]{month}
+    \literal{99}
+  }
+  \sort[direction=descending]{
+    \field[padside=left,padwidth=2,padchar=0]{day}
+    \literal{99}
+  }
+  \sort{
+    \field{sorttitle}
+  }
+  \sort[direction=descending]{
+    \field[padside=left,padwidth=4,padchar=0]{volume}
+    \literal{9999}
+  }
+}
+
+
+\setlength{\bibhang}{15pt}
+
+% add bib resources
+
+
+\addbibresource{bibliography/library.bib}
+
+\addbibresource{bibliography/conferences.bib}
+
+
+% bold my name
+\plauthorname[Vivek]{Srikrishnan}
+
+% Format sub-bibliography headings as subsections
+\defbibheading{subbibliography}[\refname]{\subsection*{#1}}
+
+% remove period inbetween volume and number
+\renewbibmacro*{volume+number+eid}{%
+  \printfield{volume}%
+%  \setunit*{\adddot}% DELETED
+  \setunit*{\addnbspace}% NEW (optional); there's also \addnbthinspace
+  \printfield{number}%
+  \setunit{\addcomma\space}%
+  \printfield{eid}%
+}
+
+\DeclareFieldFormat
+  [article,inbook,incollection,inproceedings,patent,thesis,
+   unpublished,report,techreport,misc,book]
+  {title}{\mkbibquote{#1}}
+\DeclareFieldFormat{url}{\url{#1}}
+\DeclareFieldFormat[article]{pages}{#1}
+\DeclareFieldFormat[inproceedings]{pages}{\lowercase{pp.}#1}
+\DeclareFieldFormat[incollection]{pages}{\lowercase{pp.}#1}
+\DeclareFieldFormat[article]{volume}{\mkbibbold{#1}}
+\DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
+\DeclareFieldFormat[article]{url}{}
+\DeclareFieldFormat{notes}{#1}
+\DeclareFieldFormat{shorthandwidth}{#1}
+\DeclareFieldFormat{extrayear}{}
+    
+% Remove In: for an article.
+\renewbibmacro{in:}{%
+  \ifentrytype{article}{}{%
+  \printtext{\bibstring{in}\intitlepunct}}}
+
+% Bibliography categories
+\def\makebibcategory#1#2{\DeclareBibliographyCategory{#1}\defbibheading{#1}{\subsection*{#2}}}
+\makebibcategory{papers}{Journal articles}
+\makebibcategory{inpress}{Under Review and In Press}
+\makebibcategory{conferences}{Conference Proceedings}
+\makebibcategory{books}{Books}
+\makebibcategory{chapters}{Book Chapters}
+\makebibcategory{techreport}{Reports}
+\makebibcategory{talks}{Conference Talks}
+\makebibcategory{posters}{Conference Posters}
+\makebibcategory{software}{Software}
+\makebibcategory{bookreviews}{Book reviews}
+\makebibcategory{editorials}{Editorials}
+\makebibcategory{phd}{PhD thesis}
+
+\setlength{\bibitemsep}{2.5pt}
+
+%\renewcommand*{\bibitem}{\item \mbox{} \\}
+%\defbibenvironment{bibliography}
+%{\list{}
+%  {\setlength{\leftmargin}{\bibhang}%
+%   \setlength{\itemsep}{\bibitemsep}%
+%   \setlength{\parsep}{\bibparsep}}}
+%{\endlist}
+%{\bibitem}
+
+\newenvironment{publications}{\section{Publications}}
+
+\def\printbib#1{\printbibliography[category=#1,heading=#1]}
+%\renewcommand{\bibfont}{\normalfont\fontsize{11}{13.4}\rmfamily}
+
+% Add all papers in the bib file.
+\nocite{*}
+
+
+%---------------------------------------------------------------------
+
+\begin{document}
+
+%% Name and contact block
+
+\begin{minipage}[t]{2.8in}
+ \flushright {\footnotesize
+ \href{http://ise.ncsu.edu}{Edward P. Fitts Department of Industrial and Systems Engineering}\\ \vspace{0in}
+ 915 Partners Way, 4171\\ \vspace{0in} North Carolina State University \\ \vspace{-0.04in} Raleigh, NC 27606, USA}
+ \end{minipage}
+ \begin{minipage}[t]{2.5in}
+   \flushright {\footnotesize  \texttt{\href{mailto:barachun@ncsu.edu}{barachun@ncsu.edu}} \, \faEnvelope} \\ \vspace{-0.21in}
+   \flushright {\footnotesize  \texttt{\href{http://resilience.wordpress.ncsu.edu}{http://resilience.wordpress.ncsu.edu}} \, \faGlobe} \\ \vspace{-0.195in}
+   \flushright {\footnotesize
+   \texttt{\href{https://github.com/brachunok}{brachunok}} \, \faGithub} \\ \vspace{-0.2in}
+   \flushright {\footnotesize
+   \texttt{\href{https://scholar.google.com/citations?user=Ct3IhL-MAAAAJ}{Ben Rachunok}} \, \aiGoogleScholar}
+
+ \end{minipage}
+
+ \bigskip
+
+ %% Name
+ \noindent{\LARGE\bfseries \textcolor{CornellGray}{Ben Rachunok}}
+ \reversemarginpar
+
+\bigskip
+
+%% Research Interests
+
+\section{research interests}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Climate risk management
+
+\item Coupled natural-human systems
+
+\item Complex system dynamics
+
+\item Decision-making under uncertainty
+
+\item Uncertainty characterization
+
+\end{itemize}
+
+%% Appointments
+
+\section{appointments}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Assistant Professor, Department of Biological \& Environmental Engineering, Cornell University, 2021--present
+
+\item Visiting Assistant Professor, Department of Biological \& Environmental Engineering, Cornell University, 2020--2021
+
+\item Assistant Research Professor, Earth \& Environmental Systems Institute, Pennsylvania State University, 2019--2021
+
+\item Postdoctoral Scholar, Earth \& Environmental Systems Institute, Pennsylvania State University, 2018--2019
+
+\end{itemize}
+
+%% Education
+
+\section{education}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Ph.D., Energy \& Mineral Engineering, Pennsylvania State University, 2018
+
+\item M.S., Energy \& Mineral Engineering, Pennsylvania State University, 2015
+
+\item B.S., Mathematics, University of Illinois at Urbana-Champaign, 2004
+
+\item B.A., Philosophy, University of Illinois at Urbana-Champaign, 2004
+
+\end{itemize}
+
+%% Publications
+\section{publications}
+\uspunctuation
+
+\printbibliography[type=article, title={Peer-Reviewed Journal Articles}, heading=subbibliography]
+
+\printbibliography[type=misc, title={Articles Under Review or Forthcoming}, heading=subbibliography, keyword=unpublished, resetnumbers]
+
+\printbibliography[type=report, title={Reports}, heading=subbibliography, resetnumbers]
+
+\printbibliography[type=book, title={Books}, heading=subbibliography, resetnumbers]
+
+\printbibliography[type=inproceedings, title={Conference Proceedings}, heading=subbibliography, resetnumbers]
+
+\printbibliography[type=misc, title={Conference Presentations}, heading=subbibliography, keyword=talk, resetnumbers]
+
+\printbibliography[type=misc, title={Conference Posters}, heading=subbibliography, keyword=poster, resetnumbers]
+
+%% Invited Talks
+
+\section{invited talks}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item \enquote{Interplay of Emissions and Geophyiscal Uncertainties for Future Sea-Level Rise}, Civil and Environmental Engineering Seminar,  Rice University. Houston (TX), USA. Oct. 2024.
+
+\item \enquote{Impacts of Emissions Uncertainties on Antarctic Instabilities and Sea-Level Rise}, Civil and Environmental Engineering Seminar,  Syracuse University. Syracuse (NY), USA. Mar. 2024.
+
+\item \enquote{Impacts of Emissions Uncertainties on Antarctic Instabilities and Sea-Level Rise}, Environmental Science Seminar,  Baylor University. Waco (TX), USA. Feb. 2024.
+
+\item \enquote{Navigating (Deep) Uncertainties in Climate Risk Management}, RIT Mathematical Modeling Seminar,  Rochester Institute of Technology. Rochester (NY), USA. Oct. 2023.
+
+\item \enquote{How Uncertainties Can Impact Climate Risk Management}, Earth and Atmospheric Sciences Seminar,  Cornell University. Ithaca (NY), USA. Feb. 2023.
+
+\item \enquote{An Introduction to Climate Risk Management}, Climate Change Seminar,  Cornell University. Ithaca (NY), USA. Jan. 2023.
+
+\item \enquote{Identifying Challenges and Opportunities for Uncertainty Analysis in MultiSector Dynamics Research}, Community Webinar,  MultiSector Dynamics Community of Practice. remote. Oct. 2022 (with Jonathan Lamontagne).
+
+\item \enquote{Considerations for Uncertainty in MultiSector Systems}, Cornell Energy Systems Institute Seminar,  Cornell University. Ithaca (NY), USA. Oct. 2022.
+
+\item \enquote{Climate Risk, Uncertainty, and Coupled Energy Systems}, New Energy Series, Irving Institute,  Dartmouth College. Remote. Jan. 2022.
+
+\item \enquote{Uncertainty and Climate Risk Management}, Center for Applied Mathematics Colloquium,  Cornell University. Ithaca (NY), USA. Nov. 2021.
+
+\item \enquote{A Systems Approach to Climate Risk Management}, Ezra's Round Table,  Cornell University. Ithaca (NY), USA. Sep. 2021.
+
+\item \enquote{How Likely Are the Most Extreme CO$_2$ Emissions Scenarios?}, MIT Joint Program on the Science and Policy of Global Change Seminar,  Massachusetts Institute of Technology. Remote. Aug. 2020.
+
+\item \enquote{How Likely Are the Most Extreme CO$_2$ Emissions Scenarios?}, Energy and Environmental Economics and Policy Seminar,  Pennsylvania State University. University Park (PA), USA. Feb. 2020.
+
+\item \enquote{Climate Risk Management: A Decision-Centered Approach}, Tufts Civil and Environmental Engineering Seminar,  Tufts University. Medford (MA), USA. Nov. 2019.
+
+\item \enquote{Adaptive Multi-Objective Robust Decision-Making}, Carnegie Mellon-Penn State Workshop on Multi-Objective Robust Decision-Making,  Pennsylvania State University. University Park (PA), USA. Aug. 2019.
+
+\item \enquote{From Earth-System Science to Coastal Hazards and Back}, Environmental and Sustainability Seminar,  Carnegie Mellon University. Pittsburgh (PA), USA. May 2019 (with Klaus Keller).
+
+\item \enquote{Agent-Based Models: The New 'Plastic' or the Emperor's Clothes?}, Program on Coupled Natural-Human Systems Research Seminar,  Pennsylvania State University. University Park (PA), USA. Mar. 2019 (with Klaus Keller).
+
+\item \enquote{From Earth-System Science to Coastal Hazards and Back},  Pacific Northwest National Laboratory. Richland (WA), USA. Mar. 2019 (with Klaus Keller).
+
+\item \enquote{From Earth-System Science to Coastal Hazards and Back},  Joint Global Change Research Institute. College Park (MD), USA. Feb. 2019 (with Klaus Keller).
+
+\item \enquote{Can We Avoid a (Rational) Route to Collapse?}, Workshop on Managing Natural Resource Risk in the Modern and Prehistoric World,  Santa Fe Institute. Santa Fe (NM), USA. Oct. 2018 (with Klaus Keller).
+
+\item \enquote{Hedging Strategies for Electricity Investment Decisions Under Policy Uncertainty}, Energy and Mineral Engineering Graduate Seminar,  Pennsylvania State University. University Park (PA), USA. Mar. 2016.
+
+\end{itemize}
+
+
+%% Grants and Contracts
+
+\section{grants and contracts}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Co-PI, \enquote{Valuing Hydropower Contributions Across Multiple Timescales}.  PI: Patrick Reed. NREL, \$16,556 (total: \$90,000). 2024--2024.
+
+\item Co-PI, \enquote{Addressing Deep Uncertainty in Hydropower Futures}.  PI: Patrick Reed. NREL, \$15,053 (total: \$75,000). 2022--2023.
+
+\item Investigator, Site Lead, \enquote{Understanding Multistressor and Multiscale Drivers of Feedbacks, Cascading Failures, and Risk Management Pathways within Complex MSD Systems}.  PI: Karen Fisher-Vanden. DOE (BER), \$533,922. 2021--2026.
+
+\item Co-PI, \enquote{Health Effects of Decarbonization (HEALED)}.  PI: Wei Peng. NSF, \$50,001 (total: \$399,472). 2021--2024.
+
+\item Investigator, Site Lead, Task Lead, \enquote{Integrated Coastal Modeling (ICoM)}.  PI: Ian Kraucunas. DOE (BER), \$598,217. 2021--2024.
+
+\item Investigator, \enquote{Integrated Multi-Scale Multi-Sector Modeling (IM3)}.  PI: Jennie Rice. DOE (BER), \$25,000. 2019--2020.
+
+\end{itemize}
+
+%% Networks and Projects
+
+\section{networks and projects}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Project on Coupled Human and Earth Systems (PCHES-ADAPT). Senior Personnel. PI: Karen Fisher-Vanden, Robert Nicholas, and John Weyant. Department of Energy, Biological and Environmental Research. 2021--current.
+
+\item Integrated Coastal Modeling (ICoM). Task Lead. PI: Ian Kraucunas. Department of Energy, Biological and Environmental Research. 2019--current.
+
+\item Visualizing Forest Futures (ViFF). Participant. PI: Erica Smithwick. National Science Foundation. 2019--2021.
+
+\item Project on Coupled Human and Earth Systems (PCHES-FRAME). Participant. PI: Karen Fisher-Vanden and John Weyant. Department of Energy, Biological and Environmental Research. 2018--2021.
+
+\item Network for Sustainable Climate Risk Management (SCRiM). Participant. PI: Klaus Keller. National Science Foundation. 2016--2019.
+
+\end{itemize}
+
+%% Teaching
+
+\section{teaching}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\vspace{\baselineskip}
+
+
+
+\subsection{Cornell University}
+\begin{itemize}[label={}]
+
+\item BEE 4850/5850 --- Environmental Data Analysis and Simulation. Primary Instructor. Spring 2024.
+
+\item BEE 2000 --- Perspectives on the Climate Change Challenge. Collaborative Instructor. Spring 2024.
+
+\item BEE 4750/5750 --- Environmental Systems Analysis. Primary Instructor. Fall 2022, 2023.
+
+\item BEE 6940 --- Climate Risk Analysis. Primary Instructor. Spring 2023.
+
+\item BEE 6940/AAP Design Studio --- Climate Uncertainties. Collaborative Instructor. Fall 2023.
+
+\end{itemize}
+
+\subsection{Pennsylvania State University}
+\begin{itemize}[label={}]
+
+\item EME 301 --- Thermodynamics in Energy and Mineral Engineering. Teaching Assistant. Fall and Spring 2014, 2015, 2016.
+
+\item Math 140 --- Calculus with Analytic Geometry I. Primary Instructor. Spring 2011.
+
+\item Math 411 --- Ordinary Differential Equations. Primary Instructor. Summer 2008, 2010.
+
+\item Math 232 --- Integral Vector Calculus. Primary Instructor. Spring 2010.
+
+\item Math 41 --- Trigonometry and Analytic Geometry. Primary Instructor. Fall 2005, 2010.
+
+\item Math 251 --- Ordinary and Partial Differential Equations. Primary Instructor. Fall and Spring 2007, 2008, 2009.
+
+\item Math 141 --- Calculus with Analytic Geometry II. Primary Instructor. Fall 2009.
+
+\item Math 497 --- Symplectic Geometry. Teaching Assistant. Fall 2008.
+
+\item Math 250 --- Ordinary Differential Equations. Primary Instructor. Fall 2006.
+
+\item Math 231 --- Calculus of Several Variables. Primary Instructor. Fall and Spring 2004, 2006.
+
+\end{itemize}
+
+
+%% Workshops
+
+\section{workshops organized}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Climate Risk Management Summer Fest. Hanover (NH), USA. Aug. 2024.
+
+\item Carnegie Mellon-Penn State Workshop on Multi-Objective Robust Decision-Making. University Park (PA), USA. Aug. 2019.
+
+\end{itemize}
+
+
+%% Advising
+
+\section{advising}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\vspace{\baselineskip}
+
+
+\subsection{Postdoctoral}
+\begin{itemize}[label={}]
+
+
+\item Elnaz Kabir. Decarbonized Energy System Operations. Co-advised with C. Lindsay Anderson \& Scott Steinschneider. 2021--2023.  Current: Assistant Professor, Engineering Technology \& Industrial Distribution, Texas A\&M.
+
+
+\end{itemize}
+
+\subsection{Graduate}
+\begin{itemize}[label={}]
+
+
+\item Yifan Luo. Ph.D., Civil \& Environmental Engineering. Advisor, Committee Chair. 2023--present.  
+
+\item Katerina Tang. Ph.D., Applied Mathematics. Advisor. 2022--present.  
+
+\item Parin Bhaduri. Ph.D., Biological \& Environmental Engineering. Advisor, Committee Chair. 2021--present.  
+
+\item Demola Ogunnaike. M.S., Civil \& Environmental Engineering. . 2024--present.  
+
+\item Gabriela Ackermann Logan. M.S., Biological \& Environmental Engineering. Advisor, Committee Chair. 2023--present.  
+
+\item Chloe Darnell. M.S., Biological \& Environmental Engineering. Advisor, Committee Chair. 2021--2023.  Thesis: "Uncertainty in emissions pathways and earth system dynamics: implications for global mean sea level rise." 
+
+\item Carl Frederick Aquino. M.S., Geosciences. Co-Advisor. 2020--2022.  Thesis: "Greenland ice sheet drives sea-level rise differences between model and expert projections." 
+
+\item Nicole Rosario Nieves. M.Eng., Biological \& Environmental Engineering. Advisor. 2023--2023.  Thesis: "Generation of an agent-based policy tree for decision making on home elevation in coastal floodable areas." 
+
+
+\end{itemize}
+
+\subsection{Undergraduate}
+\begin{itemize}[label={}]
+
+
+\item Cella Schnabel. Civil \& Environmental Engineering. Research Advisor. 2023--present.  
+
+\item Cannon Cline. Earth \& Atmospheric Science. Research Advisor. 2023--present.  
+
+\item Matthew Lipton. Biological \& Environmental Engineering. Research Co-Advisor (with C. Lindsay Anderson). 2023--2023.  
+
+
+\end{itemize}
+
+
+%% Committee Membership
+
+\section{committee member}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\vspace{\baselineskip}
+\begin{itemize}[label={}]
+
+\item Trevor Amestoy, Ph.D., Civil \& Environmental Engineering. current.
+
+\item Lillian Lau, Ph.D., Civil \& Environmental Engineering. current.
+
+\item Kaleb Smith, Ph.D., Civil \& Environmental Engineering. current.
+
+\item Jingya Han, Ph.D., Atmospheric Science. current.
+
+\item Taylor Fernandes Nunez, Ph.D., Applied Mathematics. current.
+
+\item Richard Toohey, Ph.D., Atmospheric Science. current.
+
+\end{itemize}
+
+
+%% Awards
+
+\section{awards}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Graduate Research Fellowship Honorable Mention, National Science Foundation. 2015
+
+\item Harold F. Martin Graduate Assistant Outstanding Teaching Award, Pennsylvania State University Graduate School. 2011
+
+\item Charles H. Hoover Memorial Award, Pennsylvania State University Department of Mathematics. 2010
+
+\item Departmental Teaching Award, Pennsylvania State University Department of Mathematics. 2008
+
+\item ZZRQ Award, Pennsylvania State University Department of Mathematics. 2006
+
+\end{itemize}
+
+%% Outreach
+
+\section{outreach}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Taught session on multi-objective robust decision-making, SCRiM/Dartmouth Summer School. 2018, 2019, 2023.
+
+\end{itemize}
+
+%% Service
+
+\section{service}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Co-Organizer and Session Chair, Energy Modeling Forum Snowmass Workshop. 2023--present.
+
+\item Faculty Fellow, Cornell Atkinson Center for a Sustainable Future. .
+
+\item Co-Organizer, BEE Department Seminar. 2021--present.
+
+\item Associate Deputy Editor, \emph{Climatic Change}.  2021--present.
+
+\item Early Career Researcher Board Member, \emph{Oxford Open Energy}.  2022--present.
+
+\item Co-Chair, MultiSector Dynamics Working Group on Uncertainty Quantification and Scenario Development. 2019--present.
+
+\item Member, MultiSector Dynamics Community of Practice Scientific Steering Group. 2019--present.
+
+\item Co-Convener and Co-Chair, AGU Sessions on MultiSector Dynamics and Uncertainty. 2020--2024.
+
+\item Co-Convener, European Social Simulation Association Meeting Session on Uncertainty in Agent-Based simulation. 2024.
+
+\item Co-Guest Editor, \emph{Water}. Special Issue on 'Climate Model Projections: Sea-Level Rise and Impacts on Coastal Defense Decision-Making'. .
+
+\item Panel Reviewer, National Science Foundation (HDBE), Department of Energy (BER). .
+
+\item Ad Hoc Reviewer, Sloan Foundation, National Science Foundation (DRMS, MG\&G), Austrian Science Fund. .
+
+\item Member, Environmental Engineering Program Curriculum Committee. Fall 2022--present.
+
+\item Member, Biological \& Environmental Engineering Faculty Search Committees. 2022, 2024.
+
+\end{itemize}
+
+%% Professional Experience
+
+\section{professional experience}
+
+\mbox{}\vspace{-\dimexpr\baselineskip\relax}
+
+\begin{itemize}[label={}]
+
+\item Research Assistant, Brownson Solar Research Group, Pennsylvania State University. 2011--2014
+
+\item Technical Editor, Journal of Modern Dynamics. 2008--2010
+
+\end{itemize}
+
+
+
+\end{document}
